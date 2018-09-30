@@ -49,7 +49,7 @@
 			}
 		});
 		if(Cookies.get("content") !== undefined) {
-			v.input.value = Cookies.get("content");
+			v.input = Cookies.get("content");
 		}
 		v.renderMd();
 		document.getElementById("hide").onclick = function() {
