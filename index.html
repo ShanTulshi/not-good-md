@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <head lang="en">
 <title>Not Good Markdown Editor</title>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js" type="text/javascript"></script>
 <style>
 	body{
 		margin:1em auto;
@@ -43,9 +44,13 @@
 			methods: {
 				renderMd: () => {
 					document.getElementById("output").innerHTML = new showdown.Converter().makeHtml(this.input.value);
+					Cookies.set("content", this.input.value, { expires: 7, path: ''});
 				}
 			}
 		});
+		if(Cookies.get("content") !== undefined) {
+			v.data.input = Cookies.get("content");
+		}
 		v.renderMd();
 		document.getElementById("hide").onclick = function() {
 			let x = document.getElementById("input");
