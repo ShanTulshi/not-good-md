@@ -28,6 +28,7 @@
 <body>
 	<h1>Not Good Markdown Editor</h1>
 	<button id="hide">Hide Editor</button>
+	<button id="clear">Clear</button>
 	<textarea id="input" rows="6" v-model="input" v-on:input="renderMd"></textarea>
 	<hr>
 	<div id="output">
@@ -39,19 +40,26 @@
 		v = new Vue({
 			el: "#input",
 			data: {
-				input: "# Your Markdown goes here",
+				input: "",
 			},
 			methods: {
 				renderMd: () => {
 					document.getElementById("output").innerHTML = new showdown.Converter().makeHtml(this.input.value);
 					Cookies.set("content", this.input.value, { expires: 7, path: ''});
 				}
+			},
+			watch: {
+				input: function() {
+					Vue.nextTick(this.renderMd);
+				}
 			}
 		});
 		if(Cookies.get("content") !== undefined) {
 			v.input = Cookies.get("content");
+		} else {
+			v.input = "# Your Markdown goes here";
 		}
-		v.renderMd();
+		// Vue.nextTick(v.renderMd);
 		document.getElementById("hide").onclick = function() {
 			let x = document.getElementById("input");
 			if(x.style.display === "none") {
@@ -62,7 +70,11 @@
 				document.getElementById("hide").innerHTML = "Show Editor";
 			}
 		};
-		
+		document.getElementById("clear").onclick = function() {
+			Cookies.remove("content");
+			v.input = "";
+			v.renderMd();
+		};
 	}
 	</script>
 </body>
