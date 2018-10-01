@@ -53,7 +53,8 @@ window.onload = () => {
 	// Grab content from URL
 	let url = new URL(window.location.href);
 	let content = url.searchParams.get("c");
-	if(content) {
+	const warningString = "Please make sure you trust the source of the link that brought you here. Markdown can contain inline HTML, which can be used to do powerful and malicious things. If you trust the source, click OK and the site will resume loading. If you do not, click Cancel and the site will load the default content.";
+	if(content && confirm(warningString)) {
 		let df = decodeURIComponent(content);
 		df = atob(df);
 		v.input = pako.inflate(df, pakoOpts);
