@@ -3,7 +3,7 @@
 <title>Not Good Markdown Editor</title>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.min.js" type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.6/pako.min.js" type="text/javascript"></script>
 <style>
 	body{
 		margin:1em auto;
@@ -29,6 +29,7 @@
 	<h1>Not Good Markdown Editor</h1>
 	<button id="hide">Hide Editor</button>
 	<button id="clear">Clear</button>
+	<small>Share by copying the link!</small>
 	<textarea id="input" rows="6" v-model="input" v-on:input="renderMd"></textarea>
 	<hr>
 	<div id="output">
@@ -38,6 +39,17 @@
 	<a href="https://github.com/ShanTulshi/not-good-md">Contributions welcome!</a></div>
 	<script type="text/javascript">
 	window.onload = () => {
+		const compression_mode = 9;
+		const showdownOpts = {
+			tasklists: true,
+		};
+		const infOpts = {
+			level: compression_mode,
+		};
+		const defOpts = {
+			level: compression_mode,
+			to: "string",
+		};
 		v = new Vue({
 			el: "#input",
 			data: {
@@ -45,8 +57,13 @@
 			},
 			methods: {
 				renderMd: () => {
-					document.getElementById("output").innerHTML = new showdown.Converter().makeHtml(this.input.value);
-					Cookies.set("content", this.input.value, { expires: 7, path: ''});
+					document.getElementById("output").innerHTML = new showdown.Converter(showdownOpts).makeHtml(this.input.value);
+					// Update query parameter
+					let url = new URL(window.location.href);
+					let params = url.searchParams;
+					df = pako.deflate(v.input, defOpts);
+					params.set("c", encodeURIComponent(df));
+					history.pushState(null, "", "?" + params.toString());
 				}
 			},
 			watch: {
@@ -55,27 +72,37 @@
 				}
 			}
 		});
-		if(Cookies.get("content")) {
-			v.input = Cookies.get("content");
-		} else {
-			v.input = "# Your Markdown goes here";
-		}
-		// Vue.nextTick(v.renderMd);
-		document.getElementById("hide").onclick = function() {
+
+		// Hide/Show button
+		function toggleEditor(val) {
 			let x = document.getElementById("input");
-			if(x.style.display === "none") {
+			if(val === true || x.style.display === "none") {
 				x.style.display = "block";
 				document.getElementById("hide").innerHTML = "Hide Editor";
 			} else {
 				x.style.display = "none";
 				document.getElementById("hide").innerHTML = "Show Editor";
 			}
-		};
+		}
+		document.getElementById("hide").onclick = toggleEditor;
+
+		// Clear button
 		document.getElementById("clear").onclick = function() {
 			Cookies.remove("content");
 			v.input = "";
 			v.renderMd();
 		};
+
+		// Grab content from URL
+		let url = new URL(window.location.href);
+		let content = url.searchParams.get("c");
+		if(content) {
+			df = decodeURIComponent(content);
+			v.input = pako.inflate(df, defOpts);
+			toggleEditor(false);
+		} else {
+			v.input = "# Your Markdown goes here";
+		}
 	}
 	</script>
 </body>
