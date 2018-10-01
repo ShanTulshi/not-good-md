@@ -43,12 +43,8 @@
 		const showdownOpts = {
 			tasklists: true,
 		};
-		const infOpts = {
+		const pakoOpts = {
 			level: compression_mode,
-		};
-		const defOpts = {
-			level: compression_mode,
-			to: "string",
 		};
 		v = new Vue({
 			el: "#input",
@@ -61,7 +57,7 @@
 					// Update query parameter
 					let url = new URL(window.location.href);
 					let params = url.searchParams;
-					df = pako.deflate(v.input, defOpts);
+					df = btoa(pako.deflate(v.input, pakoOpts));
 					params.set("c", encodeURIComponent(df));
 					history.pushState(null, "", "?" + params.toString());
 				}
@@ -97,8 +93,8 @@
 		let url = new URL(window.location.href);
 		let content = url.searchParams.get("c");
 		if(content) {
-			df = decodeURIComponent(content);
-			v.input = pako.inflate(df, defOpts);
+			df = atob(decodeURIComponent(content));
+			v.input = pako.inflate(df, pakoOpts);
 			toggleEditor(false);
 		} else {
 			v.input = "# Your Markdown goes here";
