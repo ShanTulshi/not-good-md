@@ -5,6 +5,7 @@ window.onload = () => {
 	};
 	const pakoOpts = {
 		level: compression_mode,
+		to: "string",
 	};
 	v = new Vue({
 		el: "#input",
@@ -17,10 +18,8 @@ window.onload = () => {
 				// Update query parameter
 				let url = new URL(window.location.href);
 				let params = url.searchParams;
-				// let df = pako.deflate(v.input, pakoOpts);
-				// console.log(df);
-				// df = btoa(df);
-				let df = v.input;
+				let df = pako.deflate(v.input, pakoOpts);
+				df = btoa(df);
 				params.set("c", encodeURIComponent(df));
 				history.pushState(null, "", "?" + params.toString());
 			}
@@ -56,10 +55,8 @@ window.onload = () => {
 	let content = url.searchParams.get("c");
 	if(content) {
 		let df = decodeURIComponent(content);
-		// df = atob(df)
-		console.log(df);
-		v.input = df;
-		// v.input = pako.inflate(df, pakoOpts);
+		df = atob(df);
+		v.input = pako.inflate(df, pakoOpts);
 		toggleEditor(false);
 	} else {
 		v.input = "# Your Markdown goes here";
