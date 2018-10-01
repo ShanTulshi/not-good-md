@@ -47,7 +47,6 @@ window.onload = () => {
 
 	// Clear button
 	document.getElementById("clear").onclick = function() {
-		Cookies.remove("content");
 		v.input = "";
 		v.renderMd();
 	};
