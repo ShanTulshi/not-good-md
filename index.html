@@ -57,7 +57,10 @@
 					// Update query parameter
 					let url = new URL(window.location.href);
 					let params = url.searchParams;
-					df = btoa(pako.deflate(v.input, pakoOpts));
+					// let df = pako.deflate(v.input, pakoOpts);
+					// console.log(df);
+					// df = btoa(df);
+					let df = v.input;
 					params.set("c", encodeURIComponent(df));
 					history.pushState(null, "", "?" + params.toString());
 				}
@@ -93,8 +96,11 @@
 		let url = new URL(window.location.href);
 		let content = url.searchParams.get("c");
 		if(content) {
-			df = atob(decodeURIComponent(content));
-			v.input = pako.inflate(df, pakoOpts);
+			let df = decodeURIComponent(content);
+			// df = atob(df)
+			console.log(df);
+			v.input = df;
+			// v.input = pako.inflate(df, pakoOpts);
 			toggleEditor(false);
 		} else {
 			v.input = "# Your Markdown goes here";
