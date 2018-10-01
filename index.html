@@ -4,26 +4,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.8.6/showdown.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.6/pako.min.js" type="text/javascript"></script>
-<style>
-	body{
-		margin:1em auto;
-		max-width:40em;
-		padding:0 .62em;
-		font:1.2em/1.62 sans-serif;
-	}
-	h1,h2,h3 {
-		line-height:1.2;
-	}
-	#footer {
-		width: 100%;
-		text-align: center;
-		font-size: 0.7em;
-		margin-top: 4em;
-	}
-	#input {
-		width: 100%;
-	}
-</style>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
 </head>
 <body>
 	<h1>Not Good Markdown Editor</h1>
@@ -37,74 +18,5 @@
 	<div id="footer"><hr>Made with &lt;3 by <a href="https://notgood.site">Shan Tulshi</a><br>
 	using <a href="https://vuejs.org">vue.js</a> and <a href="https://showdownjs.com">showdown.js</a>.<br>
 	<a href="https://github.com/ShanTulshi/not-good-md">Contributions welcome!</a></div>
-	<script type="text/javascript">
-	window.onload = () => {
-		const compression_mode = 9;
-		const showdownOpts = {
-			tasklists: true,
-		};
-		const pakoOpts = {
-			level: compression_mode,
-		};
-		v = new Vue({
-			el: "#input",
-			data: {
-				input: "",
-			},
-			methods: {
-				renderMd: () => {
-					document.getElementById("output").innerHTML = new showdown.Converter(showdownOpts).makeHtml(this.input.value);
-					// Update query parameter
-					let url = new URL(window.location.href);
-					let params = url.searchParams;
-					// let df = pako.deflate(v.input, pakoOpts);
-					// console.log(df);
-					// df = btoa(df);
-					let df = v.input;
-					params.set("c", encodeURIComponent(df));
-					history.pushState(null, "", "?" + params.toString());
-				}
-			},
-			watch: {
-				input: function() {
-					Vue.nextTick(this.renderMd);
-				}
-			}
-		});
-
-		// Hide/Show button
-		function toggleEditor(val) {
-			let x = document.getElementById("input");
-			if(val === true || x.style.display === "none") {
-				x.style.display = "block";
-				document.getElementById("hide").innerHTML = "Hide Editor";
-			} else {
-				x.style.display = "none";
-				document.getElementById("hide").innerHTML = "Show Editor";
-			}
-		}
-		document.getElementById("hide").onclick = toggleEditor;
-
-		// Clear button
-		document.getElementById("clear").onclick = function() {
-			Cookies.remove("content");
-			v.input = "";
-			v.renderMd();
-		};
-
-		// Grab content from URL
-		let url = new URL(window.location.href);
-		let content = url.searchParams.get("c");
-		if(content) {
-			let df = decodeURIComponent(content);
-			// df = atob(df)
-			console.log(df);
-			v.input = df;
-			// v.input = pako.inflate(df, pakoOpts);
-			toggleEditor(false);
-		} else {
-			v.input = "# Your Markdown goes here";
-		}
-	}
-	</script>
+	<script src="js/index.js" type="text/javascript"></script>
 </body>
