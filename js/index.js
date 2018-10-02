@@ -21,7 +21,7 @@ window.onload = () => {
 				let df = pako.deflate(v.input, pakoOpts);
 				df = btoa(df);
 				params.set("c", encodeURIComponent(df));
-				history.pushState(null, "", "?" + params.toString());
+				history.replaceState(null, "", "?" + params.toString());
 			}
 		},
 		watch: {
