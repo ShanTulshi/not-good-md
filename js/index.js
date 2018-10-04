@@ -25,7 +25,7 @@ window.onload = () => {
 			}
 		},
 		watch: {
-			input: function() {
+			input: () => {
 				Vue.nextTick(this.renderMd);
 			}
 		}
@@ -45,7 +45,7 @@ window.onload = () => {
 	document.getElementById("hide").onclick = toggleEditor;
 
 	// Clear button
-	document.getElementById("clear").onclick = function() {
+	document.getElementById("clear").onclick = () => {
 		v.input = "";
 		v.renderMd();
 	};
@@ -62,4 +62,14 @@ window.onload = () => {
 	} else {
 		v.input = "# Your Markdown goes here";
 	}
+
+	document.getElementById("share").onclick = () => {
+		let url = "http://tinyurl.com/api-create.php?url=" + window.location.href;
+		let req = new XMLHttpRequest();
+		req.addEventListener("load", () => {
+
+		});
+		req.open("GET", url);
+		req.send();
+	};
 }
