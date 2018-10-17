@@ -1,3 +1,21 @@
+function debounce(func, wait) {
+	let timeout;
+	return function () {
+		let context = this, args = arguments;
+		function later() {
+			timeout = null;
+			func.apply(context, args);
+		}
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+	}
+}
+
+// Only call hitstory.replaceState when the user is done typing
+const replaceState = debounce((data, title, url) => {
+	history.replaceState(data, title, url)
+}, 200)
+
 window.onload = () => {
 	const compression_mode = 9;
 	const showdownOpts = {
@@ -21,7 +39,7 @@ window.onload = () => {
 				let df = pako.deflate(v.input, pakoOpts);
 				df = btoa(df);
 				params.set("c", encodeURIComponent(df));
-				history.replaceState(null, "", "?" + params.toString());
+				replaceState(null, "", "?" + params.toString());
 			}
 		},
 		watch: {
