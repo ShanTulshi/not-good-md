@@ -20,6 +20,7 @@ window.onload = () => {
 	const compression_mode = 9;
 	const showdownOpts = {
 		tasklists: true,
+		emoji: true,
 	};
 	const pakoOpts = {
 		level: compression_mode,
